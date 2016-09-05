@@ -1,0 +1,125 @@
+{% load staticfiles bootstrap_tags %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>preader: {% block title %}{% endblock title %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <!-- Le styles -->
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+        <link rel="stylesheet" href="{% static "css/preader.css" %}">
+
+        <!-- This file store project specific CSS -->
+        {% block extra_css %}{% endblock extra_css %}
+    </head>
+
+    <body>
+
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">preader</a>
+                </div>
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="active"><a href="#">Home</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav pull-right">
+{% if user.is_authenticated %}
+                        <li>
+                            <button type="button" class="btn btn-primary navbar-btn" data-toggle="modal" data-target="#newURLModal">
+                                <i class="fa fa-plus-circle"></i> New Site
+                            </button>
+                        </li>
+{% endif %}
+                    </ul>
+                </div><!--/.nav-collapse -->
+            </div>
+        </nav>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-3 col-md-2 sidebar">
+                    <h4 class="sub-header">Feeds</h4>
+                    <ul id="feedList" class="nav nav-sidebar">
+                    </ul>
+                    <ul class="nav nav-sidebar">
+                        <li><a href="">Nav item</a></li>
+                        <li><a href="">Nav item again</a></li>
+                        <li><a href="">One more nav</a></li>
+                        <li><a href="">Another nav item</a></li>
+                        <li><a href="">More navigation</a></li>
+                    </ul>
+                    <ul class="nav nav-sidebar">
+                        <li><a href="">Nav item again</a></li>
+                        <li><a href="">One more nav</a></li>
+                        <li><a href="">Another nav item</a></li>
+                    </ul>
+                </div> <!-- /sidebar -->
+                <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+{% if user.is_authenticated %}
+    {% if messages %}
+            {% for message in messages  %}
+                    <div class="alert alert-dismissible alert-{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        {{ message }}
+                    </div> <!-- /alerts -->
+            {% endfor %}
+    {% endif %}
+{% endif %}
+{% block page_header %}
+                    <h1 class="page-header">PReader</h1>
+{% endblock %}
+                    {% block content %}<div id="mainContent"></div>{% endblock content %}
+                </div> <!-- /main -->
+            </div> <!-- /row -->
+        </div> <!-- /container -->
+
+{% if user.is_authenticated %}
+<div class="modal fade" id="newURLModal" tabindex="-1" role="dialog" aria-labelledby="newURLModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="newURLModalLabel">Add URL</h4>
+            </div>
+            <form id="newURLForm" method="post" action="{% url 'feeds:add-url' %}">
+                {% csrf_token %}
+            <div class="modal-body">
+                    {{ new_url_form|as_bootstrap }}
+                <div id="newSiteURLList"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Add</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% block js %}
+<script src="https://code.jquery.com/jquery-2.2.1.min.js" integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00=" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>{% endblock js %}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.5.2/jquery.timeago.min.js"></script>
+<script type="text/javascript">
+    var feed_list_url = "{% url "feeds:feed-list" %}";
+</script>
+<script src="{% static "js/preader.js" %}"></script>
+{% block extra_js %}
+{% endblock %}
+    </body>
+</html>

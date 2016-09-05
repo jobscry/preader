@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+
+{% endblock content %}
+
+{% block extra_js %}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.5.2/jquery.timeago.min.js"></script>
+<script type="text/javascript">
+$(function() {
+    $('div.feed').each(function(){
+        var feed = $(this);
+        var feed_id = feed.attr('id').split('-')[1];
+        $.getJSON('/f/' + feed_id + '/').done(function(data){
+            $.each(data, function(i, item){
+                $('ul#feed-' + feed_id + '-item-list').append(
+                        '<li><a href="#">' + item.fields.title + '</a> '
+                        + ' <time class="timeago" datetime="' + item.fields.published + '">' + item.fields.published + '</time>'
+                );
+            });
+            feed.find('time.timeago').timeago();
+        }).fail(function(){console.log('error')});
+    });
+});
+
+</script>
+{% endblock extra_js %}

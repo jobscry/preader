@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% load bootstrap_tags %}
+
+{% block title %}Subscribe{% endblock title %}
+
+{% block page_title %}
+<h1>Subscribe</h1>
+{% endblock %}
+
+{% block content %}
+    <p>Select the feeds to which you want to subscribe.</p>
+    <form action="{% url "feeds:subscribe" %}" method="post">
+        {% csrf_token %}
+        {{ form|as_bootstrap }}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Subscribe</button>
+        </div>
+    </form>
+
+{% endblock content %}
